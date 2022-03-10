@@ -1,0 +1,14 @@
+
+# 所有网站的验证账户密码与占比权重，目前先测试豆瓣
+douban:
+  account: 123
+  password: 222 
+  website_weight: 60
+
+redis:
+  ip: 'localhost'
+  port: 6379
+
+crawler:
+  # 爬虫间隔时间，暂定12小时，单位毫秒
+  crawl_interval: 43200000
