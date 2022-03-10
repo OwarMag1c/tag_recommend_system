@@ -1,10 +1,27 @@
 #！/usr/bin/env python
 
+from asyncore import read
+from audioop import add
+import os
 import sys
+
 from tag_films_dao import TagFilmsDao
 
+now_path = os.getcwd()
+add_path = now_path + r"/../conf/"
+sys.path.append(add_path)
+print("%s add_path has been added!" % (add_path))
+
+import data_parser
+import yaml_reader
+
 def main():
-  tag_films_dao = TagFilmsDao(host='localhost', port=6379)
+  
+  data = yaml_reader.read_yaml(os.getcwd() + r"/../conf/tag_recommend_system.yaml")
+  parser = data_parser.data_parser(data)
+  print("data parse over!", parser.douban, parser.redis, parser.crawler)
+  
+  tag_films_dao = TagFilmsDao(host=parser.redis['ip'], port=parser.redis['port'])
   
   print('SetNewValue return=' + str(tag_films_dao.SetNewValue('test1', 'test_value_1')))
   print('SetValue return=' + str(tag_films_dao.SetValue('test2', 'test_v_2')))
