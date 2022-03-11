@@ -17,11 +17,11 @@ import yaml_reader
 
 def main():
   
-  data = yaml_reader.read_yaml(os.getcwd() + r"/../conf/tag_recommend_system.yaml")
-  parser = data_parser.data_parser(data)
-  print("data parse over!", parser.douban, parser.redis, parser.crawler)
+  data = yaml_reader.ReadYaml(os.getcwd() + r"/../conf/tag_recommend_system.yaml")
+  config = data_parser.DataParser(data)
+  print("data parse over!", config.douban, config.redis, config.crawler)
   
-  tag_films_dao = TagFilmsDao(host=parser.redis['ip'], port=parser.redis['port'])
+  tag_films_dao = TagFilmsDao(host=config.redis['ip'], port=config.redis['port'])
   
   print('SetNewValue return=' + str(tag_films_dao.SetNewValue('test1', 'test_value_1')))
   print('SetValue return=' + str(tag_films_dao.SetValue('test2', 'test_v_2')))

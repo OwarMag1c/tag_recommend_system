@@ -5,9 +5,9 @@ import data_parser
 import sys
 
 def main():
-  yaml_data = yaml_reader.read_yaml('tag_recommend_system.yaml')
-  parser = data_parser.data_parser(yaml_data)
-  print(parser.douban, parser.crawler, parser.redis)
+  yaml_data = yaml_reader.ReadYaml('tag_recommend_system.yaml')
+  parser = data_parser.DataParser(yaml_data)
+  print(parser.website, parser.crawler, parser.redis)
 
 if __name__ == '__main__':
   sys.exit(main())
