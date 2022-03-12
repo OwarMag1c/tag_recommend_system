@@ -1,0 +1,20 @@
+
+syntax = "proto3";
+package tag_recommend_system;
+
+message film_info {
+  string film_id = 1;               // 电影名
+  string web_id = 2;                // 网站名
+  int64 web_score = 3;              // 网站的打分
+  int64 web_full_score = 4;         // 网站的满分
+  int64 dates = 5;                  // 上映年份
+  repeated string tags = 6;         // 类型
+  string areas = 8;                 // 制作国家
+  string directors_and_actors = 9;  // 导演、演员
+  string quote = 10;                // 短评
+}
+
+message tag_films {
+  // 该key下对应的所有电影信息
+  repeated film_info film_infos = 1;
+}

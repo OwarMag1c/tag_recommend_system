@@ -6,7 +6,7 @@ website:
     password: 222 
     website_weight: 60
     switch: 1
-    url: 'https://movie.douban.com/'
+    url: 'https://movie.douban.com/top250'
 
   - name: 'zhihu'
     account: 123

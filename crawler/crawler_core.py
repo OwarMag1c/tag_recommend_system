@@ -4,7 +4,7 @@ from flask import request
 import requests
 import os
 import sys
-import url_content_parser
+import douban_crawler
 
 now_path = os.getcwd()
 add_path = now_path + r"/../conf/"
@@ -28,8 +28,7 @@ class UrlHandleManager:
       
   # 对需要爬取网站content进行分发解析
   def Dispatch(self, web_config):
-    content = requests.get(web_config['url']).content.decode('utf-8')
     if(web_config['name'] == 'douban'):
-      url_content_parser.ParseDouban(content)
+      movie_list =  douban_crawler.CrawlDouban(web_config)
     elif(web_config['name'] == 'zhihu'):
-      url_content_parser.ParseZhihu(content)
+      pass
