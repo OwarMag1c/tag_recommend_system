@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1atag_recommend_system.proto\x12\x14tag_recommend_system\"W\n\tfilm_info\x12\x0f\n\x07\x66ilm_id\x18\x01 \x01(\x03\x12\x0e\n\x06web_id\x18\x02 \x01(\x03\x12\x11\n\tweb_score\x18\x03 \x01(\x03\x12\x16\n\x0eweb_full_score\x18\x04 \x01(\x03\"@\n\ttag_films\x12\x33\n\nfilm_infos\x18\x01 \x03(\x0b\x32\x1f.tag_recommend_system.film_infob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1atag_recommend_system.proto\x12\x14tag_recommend_system\"\xb0\x01\n\tfilm_info\x12\x0f\n\x07\x66ilm_id\x18\x01 \x01(\t\x12\x0e\n\x06web_id\x18\x02 \x01(\t\x12\x11\n\tweb_score\x18\x03 \x01(\x03\x12\x16\n\x0eweb_full_score\x18\x04 \x01(\x03\x12\r\n\x05\x64\x61tes\x18\x05 \x01(\x03\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\r\n\x05\x61reas\x18\x08 \x01(\t\x12\x1c\n\x14\x64irectors_and_actors\x18\t \x01(\t\x12\r\n\x05quote\x18\n \x01(\t\"@\n\ttag_films\x12\x33\n\nfilm_infos\x18\x01 \x03(\x0b\x32\x1f.tag_recommend_system.film_infob\x06proto3')
 
 
 
@@ -37,8 +37,8 @@ _sym_db.RegisterMessage(tag_films)
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _FILM_INFO._serialized_start=52
-  _FILM_INFO._serialized_end=139
-  _TAG_FILMS._serialized_start=141
-  _TAG_FILMS._serialized_end=205
+  _FILM_INFO._serialized_start=53
+  _FILM_INFO._serialized_end=229
+  _TAG_FILMS._serialized_start=231
+  _TAG_FILMS._serialized_end=295
 # @@protoc_insertion_point(module_scope)
