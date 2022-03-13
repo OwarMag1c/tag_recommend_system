@@ -1,48 +1,49 @@
 
-from email import contentmanager
-from flask import request
-import requests
+"""
+@author OwarMag1c
+@desc 爬虫调度分发器
+@date 2022/3/12
+说明: 采用策略设计模式，遍历在配置中开启开关的网站分发调度爬虫，解析并对数据库更新数据
+使用: 初始化后调用成员函数handle()
+"""
+
 import os
 import sys
 import douban_crawler
 
 now_path = os.getcwd()
 conf_path = now_path + r"/../conf/"
-proto_path = now_path + r"/../proto/"
-dao_path = now_path + r"/../dao/"
-sys.path.append(proto_path)
-sys.path.append(conf_path)
-sys.path.append(dao_path)
+util_path = now_path + r"/../util"
+sys.path.append(util_path)
 
-import tag_recommend_system_pb2
-import data_restorer
-from tag_films_dao import TagFilmsDao
-import film_struct_creator
-import yaml_reader
+from tag_recommend_system_util import get_cur_info
+from tag_recommend_system_util import append_project_path
+append_project_path()
+
+import data_updater
 import config_parser
 
-# 采用策略设计模式，对在配置中开关开启的url进行分发解析
 class UrlHandleManager:
+  """采用策略设计模式，对在配置中开关开启的网站进行分发调度爬虫"""
   def __init__(self):
-    data = yaml_reader.ReadYaml(conf_path + 'tag_recommend_system.yaml')
-    self.config = config_parser.DataParser(data)
-    print('UrlHandleManager init complete!')
+    self.__config = config_parser.DataParser(conf_path + 'tag_recommend_system.yaml')
+    print(get_cur_info() + 'UrlHandleManager init complete!')
     
-  # 对已在配置中注册的网站进行遍历
-  def Handle(self):
-    for web_config in self.config.website:
+  def handle(self):
+    """对已在配置中注册的网站进行遍历调度"""
+    for web_config in self.__config.website:
       if(web_config['switch'] == 1):
-        self.Dispatch(web_config)
+        self.__dispatch(web_config)
       
-  # 对需要爬取网站content进行分发解析与数据存储
-  def Dispatch(self, web_config):
+  def __dispatch(self, web_config: list):
+    """对数据进行分发解析与存储"""
     movie_list = []
     if(web_config['name'] == 'douban'):
-      movie_list =  douban_crawler.CrawlDouban(web_config)
+      movie_list =  douban_crawler.crawl_douban(web_config)
     elif(web_config['name'] == 'zhihu'):
       pass
     else:
       pass
     # 数据结构化与存储
-    data_restorer.data_restore(movie_list, web_config['name'])
+    data_updater.data_restore(movie_list, web_config['name'])
     

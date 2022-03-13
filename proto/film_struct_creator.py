@@ -1,15 +1,24 @@
 
+"""
+@author OwarMag1c
+@desc pb结构化模块
+@date 2022/3/12
+说明: 将原始数据类型转换成pb结构体
+使用: create_tag_films(film_lists, web_id): 生成tag_films；create_film_info(film, web_id): 生成film_info；
+"""
+
 import tag_recommend_system_pb2
 
-# 根据电影信息列表创建并返回pb协议结构体tag_films
-def CreateTagFilmsPb(film_lists, web_id):
-  tag_films_ = tag_recommend_system_pb2.tag_films()
+def create_tag_films(film_lists: list, web_id: str):
+  """根据film_lists与web_id生成tag_films"""
+  tag_films = tag_recommend_system_pb2.tag_films()
   for film in film_lists:
-    film_info = CreateFilmInfoPb(film, web_id)
-  return tag_films_
+    film_info = create_film_info(film, web_id)
+    tag_films.film_infos.append(film_info)
+  return tag_films
   
-# 根据单条电影信息创建并返回pb协议结构体film_info
-def CreateFilmInfoPb(film, web_id):
+def create_film_info(film: tag_recommend_system_pb2.film_info, web_id: str):
+  """根据film与web_id生成film_info"""
   film_info_ = tag_recommend_system_pb2.film_info()
   film_info_.film_id = film['title']
   film_info_.web_id = web_id
