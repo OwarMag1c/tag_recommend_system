@@ -1,5 +1,5 @@
 
-# 数据解析器，用于分发解析函数，存放结果字典
+# 配置解析器，用于分发解析函数，存放结果字典
 class DataParser:
   def __init__(self, data):
     self.data = data

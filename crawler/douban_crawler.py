@@ -16,17 +16,17 @@ headers = {
 def CrawlDouban(web_config):
   print("crawl douban content!")
   url = web_config['url']
-  movie_list = []
+  film_list = []
   # 遍历top250的电影
   for index in range(0,10):
     next_url = url + "?start=" + str(index)
     response = requests.get(next_url, headers=headers, timeout=10)
     soup = BeautifulSoup(response.text, 'lxml')
-    ParseDouban(soup, movie_list)
-  return movie_list
+    ParseDouban(soup, film_list)
+  return film_list
 
 # 解析豆瓣的content，结果加入movie_list
-def ParseDouban(soup, movie_list):
+def ParseDouban(soup, film_list):
   div_list = soup.find_all('div', class_='info')
   for each in div_list:
     title = each.find('div', class_='hd').a.span.text.strip()
@@ -56,10 +56,9 @@ def ParseDouban(soup, movie_list):
       directors_and_actors = ""
       areas = ""
       tags = ""
-    film_info = [title, rating, dates, tags, areas, directors_and_actors, quote]
+    film_info = {'title':title, 'rating': rating, 'dates': dates, 'tags': tags, 'areas': areas, 'directors_and_actors': directors_and_actors, 'quote': quote}
+    # file = open('douban_info', 'a')
+    # file.write(film_info) + '\n')
+    # file.close()
     
-    file = open('douban_info', 'a')
-    file.write(str(film_info) + '\n')    
-    file.close()
-    
-    movie_list.append(film_info)
+    film_list.append(film_info)
