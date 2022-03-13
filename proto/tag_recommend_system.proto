@@ -2,6 +2,7 @@
 syntax = "proto3";
 package tag_recommend_system;
 
+// 电影信息
 message film_info {
   string film_id = 1;               // 电影名
   string web_id = 2;                // 网站名
@@ -15,6 +16,6 @@ message film_info {
 }
 
 message tag_films {
-  // 该key下对应的所有电影信息
+  // 一个tag对应的所有电影信息
   repeated film_info film_infos = 1;
 }
