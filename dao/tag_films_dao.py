@@ -1,6 +1,7 @@
 #！/usr/bin/env python
 
 from base64 import decode
+from faulthandler import disable
 from importlib.util import decode_source
 from this import d
 import redis
@@ -9,7 +10,7 @@ class TagFilmsDao:
   # Redis交接层
   def __init__ (self, host='localhost', port=6379):
     self.pool = redis.ConnectionPool(
-      host=host, port=port, decode_responses=True)
+      host=host, port=port, decode_responses=False)
     self.r = redis.Redis(connection_pool=self.pool)
     print("pool init successfully!, host=%s, port=%d" % (host, port))
 
