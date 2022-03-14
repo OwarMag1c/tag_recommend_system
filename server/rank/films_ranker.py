@@ -2,7 +2,7 @@
 """
 @author OwarMag1c
 @desc 电影排序模块
-@date 2022/3/12
+@date 2022/3/14
 说明: 通过一定算法，对筛选tag交集后的电影计算其加权值，从而进行排序筛选
 使用: 调用rank_films(film_infos, config)返回排序后的电影数据的List: films_after_rank，其结构如下:
 films_after_rank: dict[name, film_weighted_value, film_web_list: List[website_score], 
