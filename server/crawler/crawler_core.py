@@ -4,15 +4,15 @@
 @desc 爬虫调度分发器
 @date 2022/3/12
 说明: 采用策略设计模式，遍历在配置中开启开关的网站分发调度爬虫，解析并对数据库更新数据
-使用: 初始化后调用成员函数handle()
+使用: 初始化UrlHandleManager(config)后调用成员函数handle()
 """
 
+from distutils.command.config import config
 import os
 import sys
 import douban_crawler
 
 now_path = os.getcwd()
-conf_path = now_path + r"/../conf/"
 util_path = now_path + r"/../util"
 sys.path.append(util_path)
 
@@ -25,8 +25,8 @@ import config_parser
 
 class UrlHandleManager:
   """采用策略设计模式，对在配置中开关开启的网站进行分发调度爬虫"""
-  def __init__(self):
-    self.__config = config_parser.DataParser(conf_path + 'tag_recommend_system.yaml')
+  def __init__(self, config: config_parser.DataParser):
+    self.__config = config
     print(get_cur_info() + 'UrlHandleManager init complete!')
     
   def handle(self):
@@ -45,5 +45,5 @@ class UrlHandleManager:
     else:
       pass
     # 数据结构化与存储
-    data_updater.data_restore(movie_list, web_config['name'])
+    data_updater.data_restore(movie_list, web_config['name'], self.__config)
     

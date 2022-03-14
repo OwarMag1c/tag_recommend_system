@@ -74,9 +74,10 @@ def parse_duoban(soup, film_list: list):
       areas = ""
       tags = ""
     film_info = {'title':title, 'rating': rating, 'dates': dates, 'tags': tags, 'areas': areas, 'directors_and_actors': directors_and_actors, 'quote': quote}
+    film_list.append(film_info)
     
     # file = open('douban_info', 'a')
     # file.write(str(film_info) + '\n')
     # file.close()
     
-    film_list.append(film_info)
+    
