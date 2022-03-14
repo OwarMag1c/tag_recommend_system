@@ -8,7 +8,7 @@ message film_info {
   string web_id = 2;                // 网站名
   double web_score = 3;              // 网站的打分
   double web_full_score = 4;         // 网站的满分
-  int32 dates = 5;                  // 上映年份
+  int32 date = 5;                  // 上映年份
   repeated string tags = 6;         // 类型
   string areas = 8;                 // 制作国家
   string directors_and_actors = 9;  // 导演、演员

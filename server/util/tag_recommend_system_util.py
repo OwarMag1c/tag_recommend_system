@@ -18,6 +18,8 @@ def append_project_path():
   dao_path = now_path + r"/../dao/"
   crawler_path = now_path + r"/../crawler/"
   util_path = now_path + r"/../util/"
+  rank_path = now_path + r"/../rank"
+  sys.path.append(rank_path)
   sys.path.append(crawler_path)
   sys.path.append(proto_path)
   sys.path.append(conf_path)
@@ -30,4 +32,4 @@ def get_cur_info():
     raise Exception
   except:
     f = sys.exc_info()[2].tb_frame.f_back
-  return (str(f.f_code.co_filename) + str(f.f_code.co_name) + '[' + str(f.f_lineno) + ']' + ': ')
+  return (str(f.f_code.co_filename) + ':' + str(f.f_code.co_name) + '[' + str(f.f_lineno) + ']' + ': ')

@@ -33,6 +33,9 @@ class DataParser:
   def __parse_website(self, data: dict):
     """解析所有网站配置"""
     self.website = data['website']
+    self.website_dict = {}  # 存放网站名对其配置的映射
+    for web_config in data['website']:
+      self.website_dict[web_config['name']] = web_config
     
   def __parse_data_base(self, data: dict):
     """解析redis配置"""
