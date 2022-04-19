@@ -11,6 +11,8 @@ from distutils.command.config import config
 import os
 import sys
 import douban_crawler
+import maoyan_crawler
+import rotten_tomato_crawler
 
 now_path = os.getcwd()
 util_path = now_path + r"/../util"
@@ -39,9 +41,11 @@ class UrlHandleManager:
     """对数据进行分发解析与存储"""
     movie_list = []
     if(web_config['name'] == 'douban'):
-      movie_list =  douban_crawler.crawl_douban(web_config)
-    elif(web_config['name'] == 'zhihu'):
-      pass
+      movie_list = douban_crawler.crawl_douban(web_config)
+    elif(web_config['name'] == 'maoyan'):
+      maoyan_crawler.crawl_maoyan(web_config)
+    elif(web_config['name'] == 'rotten_tomato'):
+      rotten_tomato_crawler.crawl_rotten_tomato(web_config)
     else:
       pass
     # 数据结构化与存储
