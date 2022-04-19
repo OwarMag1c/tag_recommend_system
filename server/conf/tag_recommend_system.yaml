@@ -2,18 +2,19 @@
 # 所有网站的验证账户密码与占比权重，目前先测试豆瓣
 website:
   - name: 'douban'
-    account: 123
-    password: 222 
     website_weight: 60
     switch: 1
     url: 'https://movie.douban.com/top250'
 
-  - name: 'zhihu'
-    account: 123
-    password: 333
-    website_weight: 60
+  - name: 'maoyan'
+    website_weight: 50
     switch: 1
-    url: 'https://www.zhihu.com/signin?next=%2F'
+    url: 'https://maoyan.com/board/4?'
+
+  - name: 'rotten_tomato'
+    website_weight: 70
+    switch: 1
+    url: 'https://editorial.rottentomatoes.com/guide/popular-movies/'
 
 redis:
   ip: 'localhost'
