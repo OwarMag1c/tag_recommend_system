@@ -12,6 +12,7 @@ import os
 import time
 import socket
 import threading
+import pickle
 
 now_path = os.getcwd()
 util_path = now_path + r"/util"
@@ -33,6 +34,7 @@ import config_parser
 import films_ranker
 import tag_films_dao
 import tag_recommend_system_pb2
+import rsp_struct_creator
 
 # 爬虫函数
 def crawler_func(url_handle_manager):
@@ -49,13 +51,18 @@ def request_handle(data, config):
   for tag in tag_list:
     data_bin = tag_film_dao.get_value(tag)
     tag_film_list = tag_recommend_system_pb2.tag_films()
+    # tag_film_list = pickle.loads(data_bin)
     tag_film_list.ParseFromString(data_bin)
     for film in tag_film_list.film_infos:
       if(film.film_id in film_name):
         continue
       films_result.append(film)
       film_name.add(film.film_id)
-  films_ranker.rank_films(films_result, config)
+  films_result = films_ranker.rank_films(films_result, config)
+  films_result = str(films_result[0 : 8])
+  file = open('rsp', 'w')
+  file.write(films_result)
+  file.close()
   return films_result
     
 # 线程函数
@@ -66,9 +73,12 @@ def tcp_link(sock, addr, config):
     if(not data):
       break
     print('receive data:' + data.decode())
-    rsp = request_handle(data.decode(), config)
     time.sleep(1)
-    sock.send(str(rsp).encode())
+    rsp = request_handle(data.decode(), config)
+    rsp = str(rsp)
+    rsp = str(len(rsp)) + '@' + rsp
+    print(rsp)
+    r = sock.sendall(rsp.encode('utf-8'))
   sock.close()
   print(get_cur_info() + ('Connection from %s:%s closed!' % (addr)))
   

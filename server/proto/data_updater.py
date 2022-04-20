@@ -10,6 +10,7 @@
 from distutils.command.config import config
 import os
 import sys
+import pickle
 
 now_path = os.getcwd()
 util_path = now_path + r"/../util"
@@ -42,6 +43,7 @@ def data_restore(film_list: list, web_id: 'str', config: config_parser.DataParse
     tag_films_bin = tag_films_dao.get_value(key)        # 取tag的数据
     if(tag_films_bin != None):
       tag_films.ParseFromString(tag_films_bin)          # 反序列化
+      # tag_films = pickle.loads(tag_films_bin)
     films_set = set()                                   # 去重set
     for film in tag_films.film_infos:
       films_set.add(film.film_id + web_id)              # 当电影id和网站id都相同才进行去重
@@ -51,6 +53,7 @@ def data_restore(film_list: list, web_id: 'str', config: config_parser.DataParse
       film_info = film_struct_creator.create_film_info(film, web_id)
       tag_films.film_infos.append(film_info)
     new_tag_films_bin = tag_films.SerializeToString()   # 序列化
+    # new_tag_films_bin = pickle.dumps(tag_films)
     tag_films_dao.set_value(key, new_tag_films_bin)     # 写回数据库
     
   print(get_cur_info() + 'data restore complete!')

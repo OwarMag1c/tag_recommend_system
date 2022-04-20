@@ -8,6 +8,8 @@
 说明: 展示图形界面
 """
 from cgi import test
+from cgitb import reset
+from distutils.log import error
 from ipaddress import collapse_addresses
 from logging import root
 import socket
@@ -109,19 +111,19 @@ class tag_films_recommend_gui():
     self.output_time_label.grid(row=0, column=0)
     self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=4, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
+    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[1], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=5, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
+    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[2], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=6, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
+    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[3], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=7, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
+    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[4], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=8, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
+    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[5], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=9, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
+    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[6], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=10, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
+    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[7], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_label.grid(row=11, column=0)
     
   # 构造并发送请求
@@ -136,10 +138,38 @@ class tag_films_recommend_gui():
         tag_list_req += self.tag_map[index]
         flag = 1
     print(tag_list_req)
-
     self.socket.send(tag_list_req.encode())
-    rsp = self.socket.recv(1024)
-    print(rsp.decode())
+
+    # 自定义tcp协议包, 用@分割, 前面为总长，后面为主体
+    recv = self.socket.recv(1024)
+    recv_vec = recv.split(b'@')
+    recv_len = recv_vec[0]
+    print(recv_vec)
+    recv_len = int(recv_len.decode())
+    rsp = recv_vec[1]
+    now_len = len(rsp)
+    while(now_len < recv_len):
+      recv = self.socket.recv(1024)
+      if not recv or len(recv) == 0:
+        break 
+      rsp += recv
+      now_len += len(recv)
+    rsp_str = rsp.decode('utf-8')
+    rsp_film_list = rsp_str[1 : -1].split(', ')
+    show_film_list = []
+    for film in rsp_film_list:
+      show_film_list.append(film)
+    print(show_film_list)
+    for i in range(3):
+      pass
+
+    self.output_text[0].set(str(show_film_list))
+    # file = open('rsp', 'w')
+    # file.write(str(show_film_list))
+    # file.close()
+
+  def get_show_film_info():
+    pass
 
   # 获取当 前时间
   def get_current_time(self):
