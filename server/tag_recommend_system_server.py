@@ -90,7 +90,7 @@ def request_handle(data, config):
   #     films_result.append(film)
   #     film_name.add(film.film_id)
   films_result = films_ranker.rank_films(films_result, config)
-  films_result = str(films_result[0 : 8])
+  films_result = str(films_result[0 : 20])
   return films_result
     
 # 线程函数
