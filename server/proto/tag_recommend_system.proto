@@ -10,9 +10,9 @@ message film_info {
   double web_full_score = 4;         // 网站的满分
   int32 date = 5;                  // 上映年份
   repeated string tags = 6;         // 类型
-  string areas = 8;                 // 制作国家
-  string directors_and_actors = 9;  // 导演、演员
-  string quote = 10;                // 短评
+  string areas = 7;                 // 制作国家
+  string directors_and_actors = 8;  // 导演、演员
+  string quote = 9;                // 短评
 }
 
 message tag_films {

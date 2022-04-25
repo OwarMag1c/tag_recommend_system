@@ -9,6 +9,7 @@
 
 import sys
 import os
+import datetime
 
 def append_project_path():
   """添加项目子目录到系统变量"""
@@ -32,4 +33,6 @@ def get_cur_info():
     raise Exception
   except:
     f = sys.exc_info()[2].tb_frame.f_back
-  return (str(f.f_code.co_filename) + ':' + str(f.f_code.co_name) + '[' + str(f.f_lineno) + ']' + ': ')
+  curr_time = datetime.datetime.now()
+  time_str = datetime.datetime.strftime(curr_time,'%Y-%m-%d %H:%M:%S')
+  return (time_str + ':' + str(f.f_code.co_filename) + ':' + str(f.f_code.co_name) + '[' + str(f.f_lineno) + ']' + ': ')

@@ -10,16 +10,18 @@
 from cgi import test
 from cgitb import reset
 from distutils.log import error
+from email import message
 from ipaddress import collapse_addresses
 from logging import root
 import socket
-from sqlite3 import Cursor
+from sre_parse import State
 from this import s
 from tkinter import *
-import hashlib
 import time
+from tkinter import messagebox
 from tkinter.tix import COLUMN
-from turtle import window_height, window_width
+from turtle import bgcolor, window_height, window_width
+import ast
 
 LOG_LINE_NUM = 0
 
@@ -27,8 +29,8 @@ class tag_films_recommend_gui():
   def __init__(self, init_window_name):
     self.init_window = init_window_name
     self.tag_state = [False] * 50
-    self.output_text = [StringVar()] * 10
     self.time_text = StringVar()
+    self.time_text.set('当前时间：' + self.get_current_time())
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.socket.connect(('175.27.135.19', 9997))
     self.tag_map = {0:'恐怖', 1:'剧情', 2:'爱情', 3:'同性', 4:'动画', 5:'奇幻', 6:'战争', 7:'历史', 8:'科幻', 9:'悬疑', 10:'冒险',
@@ -57,11 +59,11 @@ class tag_films_recommend_gui():
     self.rb.grid(row=row, column=column, padx=20, pady=10)
 
   # 设置窗口
-  def set_init_window(self):
+  def set_init_window(self, width, height):
     self.init_window.title("优质电影推荐_v0.1")           # 窗口名
     
-    self.window_width = 1480
-    self.window_height = 850 
+    self.window_width = width
+    self.window_height = height 
     coordinate = self.center_window(self.init_window, self.window_width, self.window_height)
     self.init_window.geometry('%dx%d+%d+%d' % (self.window_width, self.window_height, coordinate[0], coordinate[1]))
     self.init_window.resizable(False, False)
@@ -109,23 +111,47 @@ class tag_films_recommend_gui():
     self.response_frame.grid(row=2, column=3)
     self.output_time_label = Label(self.response_frame, bg='pink', textvariable=self.time_text, bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_time_label.grid(row=0, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[0], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=4, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[1], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=5, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[2], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=6, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[3], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=7, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[4], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=8, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[5], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=9, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[6], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=10, column=0)
-    self.output_label = Label(self.response_frame, bg='pink', textvariable=self.output_text[7], bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
-    self.output_label.grid(row=11, column=0)
+    self.output_text = Text(self.response_frame, bg='pink', bd=5, font=('幼圆', 15), width=50, height=30)
+    self.output_text.grid(row=4, column=0)
     
+  # 应答包处理函数
+  def rsp_handle(self):
+    recv = self.socket.recv(1024)
+    # 自定义tcp协议包, 用@分割, 前面为总长，后面为主体
+    recv_vec = recv.split(b'@')
+    recv_len = recv_vec[0]
+    recv_len = int(recv_len.decode())
+    rsp = recv_vec[1]
+    # file = open('rsp', 'a')
+    # file.write(str(recv) + '\n')
+    # file.close()
+    if(recv_len == 0 or recv_len == 2):
+      messagebox.showinfo(title='提示', message='没有包括这些标签的电影！', )
+      return
+    now_len = len(rsp)
+    while(now_len < recv_len):
+      recv = self.socket.recv(1024)
+      if not recv or len(recv) == 0:
+        break 
+      rsp += recv
+      now_len += len(recv)
+    rsp_str = rsp.decode('utf-8')
+    rsp_list = rsp_str[2: -2].split('}, {')
+    show_str = ''
+    no_index = 1
+    for rsp_film in rsp_list:
+      rsp_film = '{' + rsp_film + '}'
+      film_dict = ast.literal_eval(rsp_film)
+      show_str += 'No' + str(no_index) + '. ' + film_dict['name'] + '\n'
+      show_str += '加权得分: ' + str(film_dict['film_weighted_value']) + '\n'
+      show_str += '上映年份: ' + str(film_dict['film_dates']) + ', 标签: ' + str(film_dict['film_tags']) + '\n'
+      show_str += '地区: ' + film_dict['film_areas'] + '\n'
+      show_str += film_dict['film_directors_and_actors'] + '\n'
+      show_str += '简评: ' + film_dict['film_quote'] + '\n\n'
+      no_index += 1
+    self.output_text.delete(1.0, END)
+    self.output_text.insert(INSERT, show_str)
+
   # 构造并发送请求
   def tag_select_button_command(self):
     self.time_text.set('当前时间：' + self.get_current_time())
@@ -138,48 +164,22 @@ class tag_films_recommend_gui():
         tag_list_req += self.tag_map[index]
         flag = 1
     print(tag_list_req)
+    if(len(tag_list_req) == 0):
+      messagebox.showinfo(title='提示', message='请选择标签！', )
+      return
     self.socket.send(tag_list_req.encode())
+    self.rsp_handle()
 
-    # 自定义tcp协议包, 用@分割, 前面为总长，后面为主体
-    recv = self.socket.recv(1024)
-    recv_vec = recv.split(b'@')
-    recv_len = recv_vec[0]
-    print(recv_vec)
-    recv_len = int(recv_len.decode())
-    rsp = recv_vec[1]
-    now_len = len(rsp)
-    while(now_len < recv_len):
-      recv = self.socket.recv(1024)
-      if not recv or len(recv) == 0:
-        break 
-      rsp += recv
-      now_len += len(recv)
-    rsp_str = rsp.decode('utf-8')
-    rsp_film_list = rsp_str[1 : -1].split(', ')
-    show_film_list = []
-    for film in rsp_film_list:
-      show_film_list.append(film)
-    print(show_film_list)
-    for i in range(3):
-      pass
-
-    self.output_text[0].set(str(show_film_list))
-    # file = open('rsp', 'w')
-    # file.write(str(show_film_list))
-    # file.close()
-
-  def get_show_film_info():
-    pass
-
-  # 获取当 前时间
+  # 获取当前时间
   def get_current_time(self):
     current_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
     return current_time
 
 def gui_start():
-  init_window = Tk()              # 实例化出一个父窗口
-  ZMJ_PORTAL = tag_films_recommend_gui(init_window)
+  # 实例化出一个父窗口
+  init_window = Tk()
+  recommend_gui = tag_films_recommend_gui(init_window)
   # 设置根窗口默认属性
-  ZMJ_PORTAL.set_init_window()
-
-  init_window.mainloop()          # 父窗口进入事件循环，可以理解为保持窗口运行，否则界面不展示
+  recommend_gui.set_init_window(1400, 860)
+  # 父窗口进入事件循环，可以理解为保持窗口运行，否则界面不展示
+  init_window.mainloop()

@@ -18,7 +18,7 @@ append_project_path()
 
 def main():
   config = config_parser.DataParser('tag_recommend_system.yaml')
-  print(get_cur_info(), config.website, config.crawler, config.redis)
+  print(config.website, config.crawler, config.redis, config.port_list)
 
 if __name__ == '__main__':
   sys.exit(main())
