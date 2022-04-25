@@ -23,3 +23,7 @@ redis:
 crawler:
   # 爬虫间隔时间，暂定12小时，单位毫秒
   crawl_interval: 43200000
+
+# 对外开放的端口
+ports:
+  - 9997

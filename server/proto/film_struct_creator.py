@@ -17,7 +17,7 @@ def create_tag_films(film_lists: list, web_id: str):
     tag_films.film_infos.append(film_info)
   return tag_films
   
-def create_film_info(film: tag_recommend_system_pb2.film_info, web_id: str):
+def create_film_info(film: dict, web_id: str):
   """根据film与web_id生成film_info"""
   film_info_ = tag_recommend_system_pb2.film_info()
   film_info_.film_id = film['title']
@@ -27,7 +27,7 @@ def create_film_info(film: tag_recommend_system_pb2.film_info, web_id: str):
     film_info_.web_full_score = float(10)
   else:
     film_info_.web_full_score = float(100)
-  film_info_.dates = int(film['dates'])
+  film_info_.date = int(film['dates'])
   for tag in film['tags']:
     film_info_.tags.append(tag)
   film_info_.areas = film['areas']

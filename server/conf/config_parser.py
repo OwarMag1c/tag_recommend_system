@@ -29,6 +29,13 @@ class DataParser:
     self.__parse_website(self.__data)
     self.__parse_data_base(self.__data)
     self.__parse_crawler(self.__data)
+    self.__parse_port(self.__data)
+      
+  def __parse_port(self, data: dict):
+    ports = data['ports']
+    self.port_list = []
+    for port in ports:
+      self.port_list.append(port)
       
   def __parse_website(self, data: dict):
     """解析所有网站配置"""

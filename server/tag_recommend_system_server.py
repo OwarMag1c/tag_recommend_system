@@ -45,24 +45,52 @@ def crawler_func(url_handle_manager):
 # 请求处理函数
 def request_handle(data, config):
   tag_list = data.split(',')
+  if(len(tag_list) == 0):
+    return ''
   tag_film_dao = tag_films_dao.TagFilmsDao()
   films_result = []
-  film_name = set()
+  
+  film_name = set() # 去重集合
   for tag in tag_list:
     data_bin = tag_film_dao.get_value(tag)
+    if data_bin == None:
+      return ''
     tag_film_list = tag_recommend_system_pb2.tag_films()
     # tag_film_list = pickle.loads(data_bin)
     tag_film_list.ParseFromString(data_bin)
-    for film in tag_film_list.film_infos:
-      if(film.film_id in film_name):
-        continue
+    if(len(film_name) == 0): # 第一个tag对应的数据直接加入集合
+      for film in tag_film_list.film_infos:
+        film_name.add(film.film_id)
+    else : # 否则加入其他集合，再与第一个tag的集合取交集
+      tmp_film_name = set()
+      for film in tag_film_list.film_infos:
+        tmp_film_name.add(film.film_id)
+      film_name = tmp_film_name & film_name
+  
+  # 对取集合里的所有数据
+  data_bin = tag_film_dao.get_value(tag_list[0])
+  if data_bin == None:
+      return ''
+  tag_film_list = tag_recommend_system_pb2.tag_films()
+  tag_film_list.ParseFromString(data_bin)
+  for film in tag_film_list.film_infos:
+    if(film.film_id in film_name):
       films_result.append(film)
-      film_name.add(film.film_id)
+  
+  # for tag in tag_list:
+  #   data_bin = tag_film_dao.get_value(tag)
+  #   if data_bin == None:
+  #     return ''
+  #   tag_film_list = tag_recommend_system_pb2.tag_films()
+  #   # tag_film_list = pickle.loads(data_bin)
+  #   tag_film_list.ParseFromString(data_bin)
+  #   for film in tag_film_list.film_infos:
+  #     if(film.film_id in film_name):
+  #       continue
+  #     films_result.append(film)
+  #     film_name.add(film.film_id)
   films_result = films_ranker.rank_films(films_result, config)
-  films_result = str(films_result[0 : 8])
-  file = open('rsp', 'w')
-  file.write(films_result)
-  file.close()
+  films_result = str(films_result[0 : 20])
   return films_result
     
 # 线程函数
@@ -76,8 +104,11 @@ def tcp_link(sock, addr, config):
     time.sleep(1)
     rsp = request_handle(data.decode(), config)
     rsp = str(rsp)
-    rsp = str(len(rsp)) + '@' + rsp
-    print(rsp)
+    rsp = str(len(rsp.encode())) + '@' + rsp
+    # print(rsp)
+    # file = open('rsp', 'a')
+    # file.write(rsp + '\n')
+    # file.close()
     r = sock.sendall(rsp.encode('utf-8'))
   sock.close()
   print(get_cur_info() + ('Connection from %s:%s closed!' % (addr)))

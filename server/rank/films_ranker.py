@@ -49,8 +49,8 @@ def rank_films(film_infos: list, config: config_parser.DataParser):
     film_weighted_value = float(0) # 加权值
     film_web_list = [] # 所有网站得分
     for film in film_info_dict[film_info_key]:
-      if(film.dates != -1):
-        film_dates = film.dates
+      if(film.date != -1):
+        film_dates = film.date
       if(film.tags != ''):
         film_tags = film.tags
       if(film.directors_and_actors != ''):
@@ -62,7 +62,7 @@ def rank_films(film_infos: list, config: config_parser.DataParser):
       film_web_list.append(film.web_id + '得分:' + str(film.web_score) + '/' + str(film.web_full_score))
       website_weight = config.website_dict[film.web_id]['website_weight']
       film_weighted_value += float(website_weight) * float(film.web_score) / float(film.web_full_score)
-    film_reveal_info = {'name': film_info_key, 'film_weighted_value': round(film_weighted_value, 2), 'film_web_list': film_web_list, 'film_dates': film_dates, 'film_tags': film_tags, 'film_areas': film_areas, 'film_directors_and_actors': film_directors_and_actors, 'film_quote': film_quote}
+    film_reveal_info = {'name': film_info_key, 'film_weighted_value': round(film_weighted_value, 2), 'film_web_list': film_web_list, 'film_dates': int(film_dates), 'film_tags': film_tags, 'film_areas': film_areas, 'film_directors_and_actors': film_directors_and_actors, 'film_quote': film_quote}
     films_after_rank.append(film_reveal_info)
   films_after_rank.sort(key=__get_film_reveal_info_weight, reverse=True)  # 根据film_weighted_value降序排序
   print(get_cur_info() + 'tag_films rank complete!')
