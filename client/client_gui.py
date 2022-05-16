@@ -9,6 +9,7 @@
 """
 from cgi import test
 from cgitb import reset
+from distutils.command.config import config
 from distutils.log import error
 from email import message
 from ipaddress import collapse_addresses
@@ -19,6 +20,7 @@ from this import s
 from tkinter import *
 import time
 from tkinter import messagebox
+import tkinter
 from tkinter.tix import COLUMN
 from turtle import bgcolor, window_height, window_width
 import ast
@@ -104,14 +106,19 @@ class tag_films_recommend_gui():
     self.set_tag('犯罪', lambda: self.rb_command(22), 10, 6)
     self.set_tag('纪录片', lambda: self.rb_command(23), 10, 8)
 
-    self.tag_select_button = Button(self.tag_frame, text='点击推荐!', bg='pink', bd=5, font=('幼圆', 25), justify=CENTER, cursor='circle', command=self.tag_select_button_command)
+    # 推荐按钮
+    self.tag_select_button = Button(self.tag_frame, text='已选TAG的交集推荐', bg='pink', bd=5, font=('幼圆', 25), justify=CENTER, cursor='circle', command=self.tag_select_button_intersection_command)
     self.tag_select_button.grid(row=24, column=6, pady=20, padx=20)
+
+    self.tag_select_button = Button(self.tag_frame, text='已选TAG的并集推荐', bg='pink', bd=5, font=('幼圆', 25), justify=CENTER, cursor='circle', command=self.tag_select_button_union_command)
+    self.tag_select_button.grid(row=26, column=6, pady=20, padx=20)
     
     self.response_frame = Frame(width=670, height=670, bg='pink')
     self.response_frame.grid(row=2, column=3)
     self.output_time_label = Label(self.response_frame, bg='pink', textvariable=self.time_text, bd=5, font=('幼圆', 15), justify=LEFT, anchor='sw')
     self.output_time_label.grid(row=0, column=0)
-    self.output_text = Text(self.response_frame, bg='pink', bd=5, font=('幼圆', 15), width=50, height=30)
+    self.scroll = Scrollbar()
+    self.output_text = Text(self.response_frame, bg='pink', bd=5, font=('幼圆', 15), width=50, height=30, yscrollcommand=self.scroll.set)
     self.output_text.grid(row=4, column=0)
     
   # 应答包处理函数
@@ -152,8 +159,8 @@ class tag_films_recommend_gui():
     self.output_text.delete(1.0, END)
     self.output_text.insert(INSERT, show_str)
 
-  # 构造并发送请求
-  def tag_select_button_command(self):
+  # 并集按钮构造并发送请求
+  def tag_select_button_intersection_command(self):
     self.time_text.set('当前时间：' + self.get_current_time())
     tag_list_req = ''
     flag = 0
@@ -163,6 +170,26 @@ class tag_films_recommend_gui():
           tag_list_req += ','
         tag_list_req += self.tag_map[index]
         flag = 1
+    tag_list_req += '&intersection'
+    print(tag_list_req)
+    if(len(tag_list_req) == 0):
+      messagebox.showinfo(title='提示', message='请选择标签！', )
+      return
+    self.socket.send(tag_list_req.encode())
+    self.rsp_handle()
+
+    # 交集按钮构造并发送请求
+  def tag_select_button_union_command(self):
+    self.time_text.set('当前时间：' + self.get_current_time())
+    tag_list_req = ''
+    flag = 0
+    for index in range(24):
+      if(self.tag_state[index]):
+        if(flag == 1):
+          tag_list_req += ','
+        tag_list_req += self.tag_map[index]
+        flag = 1
+    tag_list_req += '&union'
     print(tag_list_req)
     if(len(tag_list_req) == 0):
       messagebox.showinfo(title='提示', message='请选择标签！', )
@@ -180,6 +207,6 @@ def gui_start():
   init_window = Tk()
   recommend_gui = tag_films_recommend_gui(init_window)
   # 设置根窗口默认属性
-  recommend_gui.set_init_window(1400, 860)
+  recommend_gui.set_init_window(1400, 920)
   # 父窗口进入事件循环，可以理解为保持窗口运行，否则界面不展示
   init_window.mainloop()
