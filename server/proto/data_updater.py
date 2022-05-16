@@ -50,7 +50,7 @@ def data_restore(film_list: list, web_id: 'str', config: config_parser.DataParse
     for film in tag_film_dict[key]:                     # 写入新数据
       if((film['title'] + web_id) in films_set):
         continue
-      film_info = film_struct_creator.create_film_info(film, web_id)
+      film_info = film_struct_creator.create_film_info(film, web_id, config)
       tag_films.film_infos.append(film_info)
     new_tag_films_bin = tag_films.SerializeToString()   # 序列化
     # new_tag_films_bin = pickle.dumps(tag_films)

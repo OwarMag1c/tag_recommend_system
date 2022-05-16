@@ -3,16 +3,19 @@
 website:
   - name: 'douban'
     website_weight: 60
+    website_full_score: 10
     switch: 1
     url: 'https://movie.douban.com/top250'
 
   - name: 'maoyan'
     website_weight: 50
+    website_full_score: 10
     switch: 1
     url: 'https://maoyan.com/board/4?'
 
   - name: 'rotten_tomato'
     website_weight: 70
+    website_full_score: 10
     switch: 1
     url: 'https://editorial.rottentomatoes.com/guide/popular-movies/'
 
